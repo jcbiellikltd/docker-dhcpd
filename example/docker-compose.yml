@@ -1,0 +1,8 @@
+dhcpd:
+  image: joebiellik/dhcpd
+
+  net: host
+
+  volumes:
+    # Config pass through
+    - ./dhcpd.conf:/etc/dhcp/dhcpd.conf
