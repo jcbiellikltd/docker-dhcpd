@@ -1,8 +1,6 @@
 FROM alpine:latest
 
-RUN set -xe \
-	&& apk add --update --no-progress dhcp \
-	&& rm -rf /var/cache/apk/*
+RUN apk add --no-cache dhcp
 
 EXPOSE 67/udp 67/tcp
 
