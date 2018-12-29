@@ -15,7 +15,7 @@ See [example directory](https://github.com/jcbiellikltd/docker-dhcpd/tree/master
 
 ```yml
 dhcpd:
-  image: joebiellik/bind
+  image: joebiellik/dhcpd
 
   net: host
 
