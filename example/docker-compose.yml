@@ -1,9 +1,0 @@
-dhcpd:
-  image: joebiellik/dhcpd
-  network_mode: host
-  container_name: dhcpd
-  restart: unless-stopped
-  volumes:
-    # Change "/opt" to your directory
-    - /opt/dhcpd:/etc/dhcp
-    - /opt/dhcpd:/var/lib/dhcp

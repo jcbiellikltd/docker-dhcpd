@@ -1,1 +1,9 @@
-*
+.git
+.gitignore
+.github
+.vscode
+.idea
+*.log
+*.tmp
+*.swp
+.DS_Store
