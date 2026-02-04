@@ -1,25 +1,80 @@
-# DHCP Sever Container
+# DHCP Server Container
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/joebiellik/dhcpd.svg)](https://hub.docker.com/r/joebiellik/dhcpd/)
-[![Docker Stars](https://img.shields.io/docker/stars/joebiellik/dhcpd.svg)](https://hub.docker.com/r/joebiellik/dhcpd/)
-[![Docker Build](https://img.shields.io/docker/cloud/automated/joebiellik/dhcpd.svg)](https://hub.docker.com/r/joebiellik/dhcpd/)
-[![Docker Build Status](https://img.shields.io/docker/cloud/build/joebiellik/dhcpd.svg)](https://hub.docker.com/r/joebiellik/dhcpd/)
+Languages: English | [Português (Brasil)](README.pt-BR.md)
 
-[ISC DHCP server](https://www.isc.org/downloads/dhcp/) running on [Alpine Linux](https://hub.docker.com/_/alpine/).
+Simple and lightweight DHCP server based on ISC DHCP and the Alpine Linux image.
 
-## Configuration
+## DHCP Configuration
 
-See [example directory](https://github.com/jcbiellikltd/docker-dhcpd/tree/master/example) for sample config file.
+Below is an example of a `dhcpd.conf` file. Adjust it as needed. In this example:
 
-## Quickstart
+- the network is 192.168.86.0,
+- the router is 192.168.86.1,
+- netmask is 255.255.255.0,
+- DNS servers are 192.168.86.1 and 8.8.8.8, and
+- IPs are distributed in the range from 192.168.86.100 to 192.168.86.250
 
 ```yml
-dhcpd:
-  image: joebiellik/dhcpd
+# dhcpd.conf file
 
-  net: host
+authoritative;
 
-  volumes:
-    # Config pass through
-    - ./dhcpd.conf:/etc/dhcp/dhcpd.conf
+# Lease time in seconds
+default-lease-time                3588;
+max-lease-time                    7200;
+
+# Subnet
+subnet 192.168.86.0 netmask 255.255.255.0 {
+  option routers                  192.168.86.1;
+  option subnet-mask              255.255.255.0;
+  option broadcast-address        192.168.86.255;
+  option domain-name-servers      192.168.86.1, 8.8.8.8;
+  range                           192.168.86.100 192.168.86.250;
+
+  # Set the network domain
+  option domain-name "my-domain.com";
+
+  # Static IPs outside the range above
+  host MacBook-Sales      { hardware ethernet 70:3A:CB:D8:70:40; fixed-address 192.168.86.12; }
+  host Laptop-Hospital    { hardware ethernet 44:2C:05:4B:9C:19; fixed-address 192.168.86.15; }
+  host Laptop-HR          { hardware ethernet 70:3A:CB:D8:70:56; fixed-address 192.168.86.252; }
+  host Cell-Security      { hardware ethernet 70:3A:CB:D8:70:CF; fixed-address 192.168.86.94; }
+}
 ```
+
+## How to use
+
+1. Create a directory for config and leases, for example `/opt/dhcpd`.
+1. Create `/opt/dhcpd/dhcpd.conf` with your configuration and create `/opt/dhcpd/dhcpd.leases` (it may be empty). Make sure the container can write to it.
+1. Start the container using Docker Compose or `docker run` (examples below).
+1. If needed, check logs with `docker logs -f dhcpd`.
+
+## Running the container
+
+### Docker run
+
+Although Docker Compose is preferred, you can run the container with `docker run`:
+
+```bash
+docker run -d --name my-dhcp-server --network host -v /opt/dhcpd:/app --restart=always lseara/dhcpd
+```
+
+### Docker Compose
+
+Example `docker-compose.yml`:
+
+```yml
+services:
+
+  dhcpd:
+    image: lseara/dhcpd
+    network_mode: host
+    container_name: dhcpd
+    restart: unless-stopped
+    environment:
+      TZ: 'America/Sao_Paulo'
+    volumes:
+      - /opt/dhcpd:/app
+```
+
+Make sure the volume directory (in this example `/opt/dhcpd`) contains the `dhcpd.conf` from the example above and a `dhcpd.leases` file (it may be empty). The container reads `/app/dhcpd.conf` and writes `/app/dhcpd.leases`.
