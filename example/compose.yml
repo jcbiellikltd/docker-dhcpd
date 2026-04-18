@@ -1,0 +1,8 @@
+services:
+  dhcpd:
+    image: joebiellik/dhcpd
+    network_mode: host
+    volumes:
+      - ./dhcpd.conf:/etc/dhcp/dhcpd.conf
+      # Uncomment to persist leases, make sure a empty file exists first
+      # - ./dhcpd.leases:/var/lib/dhcp/dhcpd.leases
