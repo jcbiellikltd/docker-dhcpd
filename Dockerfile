@@ -15,9 +15,10 @@ RUN apk add --no-cache dhcp
 
 EXPOSE 67/udp
 
-RUN ["touch", "/var/lib/dhcp/dhcpd.leases"]
-
 VOLUME ["/etc/dhcp"]
 
-# check=skip=JSONArgsRecommended
-CMD exec /usr/sbin/dhcpd -4 -f -d --no-pid ${INTERFACES}
+COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+
+CMD ["/usr/sbin/dhcpd", "-4", "-f", "-d", "--no-pid"]

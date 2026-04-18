@@ -31,8 +31,8 @@ services:
     network_mode: host
     volumes:
       - ./dhcpd.conf:/etc/dhcp/dhcpd.conf
-      # Uncomment to persist leases, make sure an empty file exists first
-      # - ./dhcpd.leases:/var/lib/dhcp/dhcpd.leases
+      # Uncomment to persist leases across container restarts
+      # - ./data:/var/lib/dhcp
 ```
 
 See the [example directory](https://github.com/jcbiellikltd/docker-dhcpd/tree/main/example) for a sample `dhcpd.conf`.

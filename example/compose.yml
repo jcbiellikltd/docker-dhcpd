@@ -4,5 +4,5 @@ services:
     network_mode: host
     volumes:
       - ./dhcpd.conf:/etc/dhcp/dhcpd.conf
-      # Uncomment to persist leases, make sure a empty file exists first
-      # - ./dhcpd.leases:/var/lib/dhcp/dhcpd.leases
+      # Uncomment to persist leases across container restarts
+      # - ./data:/var/lib/dhcp
